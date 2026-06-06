@@ -1,4 +1,4 @@
-# 🎯 CS2 Skin Generator
+# 🎯 CS2 Skin Generator **Автор:** [Goblin_Thug](https://github.com/GoblinThug)
 
 Удобный инструмент для дизайнеров, разработчиков и создателей макетов рулеток CS2.
 
