@@ -3,117 +3,239 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>CS2 Skin Generator</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-	<link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/style.css" />
 </head>
-<body class="min-h-screen bg-[#050509] text-white">
-	<header class="fixed left-0 top-0 z-50 flex h-12 w-full items-center justify-between border-b border-zinc-800 bg-zinc-950/95 backdrop-blur app-drag">
-		<div class="flex h-full items-center gap-3 px-4">
-			<div class="h-3 w-3 rounded-full bg-sky-500 shadow-lg shadow-sky-500/50"></div>
-			<div class="text-sm font-semibold text-white">
-				CS2 Skin Generator
-			</div>
-		</div>
-	
-		<div class="flex h-full items-center app-no-drag">
-			<button id="reloadApp" class="h-full px-4 text-xs text-zinc-400 transition hover:bg-zinc-800 hover:text-white">Reload</button>
-			<button id="openDevTools" class="h-full px-4 text-xs text-zinc-400 transition hover:bg-zinc-800 hover:text-white">DevTools</button>
-			<button id="minimizeWindow" class="h-full w-12 text-zinc-400 transition hover:bg-zinc-800 hover:text-white flex items-center justify-center">
-				<svg class="fill-[#d9d9d9]" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect x="7" y="11" width="10" height="2" rx="1"/>
-				</svg>														
-			</button>
-			<button id="maximizeWindow" class="h-full w-12 text-zinc-400 transition hover:bg-zinc-800 hover:text-white flex items-center justify-center">
-				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path class="fill-[#d9d9d9]" fill-rule="evenodd" clip-rule="evenodd" d="M15.5 6.24998C16.7426 6.24998 17.75 7.25735 17.75 8.49998V15.5C17.75 16.7426 16.7426 17.75 15.5 17.75H8.5C7.25736 17.75 6.25 16.7426 6.25 15.5V8.49998C6.25 7.25735 7.25737 6.24999 8.5 6.24998H15.5ZM8.5 7.74998C8.08579 7.74999 7.75001 8.08578 7.75 8.49998V15.5C7.75 15.9142 8.08579 16.25 8.5 16.25H15.5C15.9142 16.25 16.25 15.9142 16.25 15.5V8.49998C16.25 8.08578 15.9142 7.74998 15.5 7.74998H8.5Z"/>
-				</svg>									
-			</button>
-			<button id="closeWindow" class="h-full w-12 text-zinc-400 transition hover:bg-red-500 hover:text-white flex items-center justify-center">
-				<svg class="fill-[#d9d9d9]" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M15.4697 7.46968C15.7626 7.17679 16.2374 7.17679 16.5303 7.46968C16.8232 7.76258 16.8232 8.23746 16.5303 8.53035L13.0607 12L16.5303 15.4697C16.8232 15.7626 16.8232 16.2375 16.5303 16.5304C16.2375 16.8232 15.7626 16.8232 15.4697 16.5304L12 13.0607L8.53033 16.5304C8.23744 16.8232 7.76256 16.8232 7.46967 16.5304C7.17678 16.2375 7.17678 15.7626 7.46967 15.4697L10.9393 12L7.46967 8.53035C7.17678 8.23745 7.17678 7.76257 7.46967 7.46968C7.76256 7.17679 8.23744 7.17679 8.53033 7.46968L12 10.9393L15.4697 7.46968Z"/>
-				</svg>					
-			</button>
-		</div>
-	</header>
-    <main class="mx-auto max-w-7xl px-6 py-8 pt-20">
-        <header class="mb-8">
-            <h1 class="text-4xl font-bold tracking-tight">CS2 Skin Generator</h1>
-            <p class="mt-2 text-zinc-400">Генератор тестовых данных для макетов рулеток</p>
+
+<body class="h-screen overflow-hidden bg-transparent text-white">
+    <div
+        id="app"
+        class="h-screen overflow-y-auto overflow-x-hidden rounded-[24px] bg-[#050509]/90 backdrop-blur-3xl"
+    >
+        <header
+            class="sticky left-0 top-0 z-[9999] flex h-12 w-full items-center justify-between border-b border-zinc-800 bg-zinc-950/95 backdrop-blur app-drag"
+        >
+            <div class="flex h-full items-center gap-3 px-4">
+                <div class="h-3 w-3 rounded-full bg-sky-500 shadow-lg shadow-sky-500/50"></div>
+
+                <div class="text-sm font-semibold text-white">
+                    CS2 Skin Generator
+                </div>
+            </div>
+
+            <div class="flex h-full items-center app-no-drag">
+                <button
+                    id="reloadApp"
+                    class="h-full px-4 text-xs text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
+                >
+                    Reload
+                </button>
+
+                <button
+                    id="openDevTools"
+                    class="h-full px-4 text-xs text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
+                >
+                    DevTools
+                </button>
+
+                <button
+                    id="minimizeWindow"
+                    class="flex h-full w-12 items-center justify-center text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
+                >
+                    <svg class="fill-[#d9d9d9]" width="24" height="24" viewBox="0 0 24 24">
+                        <rect x="7" y="11" width="10" height="2" rx="1" />
+                    </svg>
+                </button>
+
+                <button
+                    id="maximizeWindow"
+                    class="flex h-full w-12 items-center justify-center text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
+                >
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path
+                            class="fill-[#d9d9d9]"
+                            fill-rule="evenodd"
+                            clip-rule="evenodd"
+                            d="M15.5 6.24998C16.7426 6.24998 17.75 7.25735 17.75 8.49998V15.5C17.75 16.7426 16.7426 17.75 15.5 17.75H8.5C7.25736 17.75 6.25 16.7426 6.25 15.5V8.49998C6.25 7.25735 7.25737 6.24999 8.5 6.24998H15.5ZM8.5 7.74998C8.08579 7.74999 7.75001 8.08578 7.75 8.49998V15.5C7.75 15.9142 8.08579 16.25 8.5 16.25H15.5C15.9142 16.25 16.25 15.9142 16.25 15.5V8.49998C16.25 8.08578 15.9142 7.74998 15.5 7.74998H8.5Z"
+                        />
+                    </svg>
+                </button>
+
+                <button
+                    id="closeWindow"
+                    class="flex h-full w-12 items-center justify-center text-zinc-400 transition hover:bg-red-500 hover:text-white"
+                >
+                    <svg class="fill-[#d9d9d9]" width="24" height="24" viewBox="0 0 24 24">
+                        <path
+                            d="M15.4697 7.46968C15.7626 7.17679 16.2374 7.17679 16.5303 7.46968C16.8232 7.76258 16.8232 8.23746 16.5303 8.53035L13.0607 12L16.5303 15.4697C16.8232 15.7626 16.8232 16.2375 16.5303 16.5304C16.2375 16.8232 15.7626 16.8232 15.4697 16.5304L12 13.0607L8.53033 16.5304C8.23744 16.8232 7.76256 16.8232 7.46967 16.5304C7.17678 16.2375 7.17678 15.7626 7.46967 15.4697L10.9393 12L7.46967 8.53035C7.17678 8.23745 7.17678 7.76257 7.46967 7.46968C7.76256 7.17679 8.23744 7.17679 8.53033 7.46968L12 10.9393L15.4697 7.46968Z"
+                        />
+                    </svg>
+                </button>
+            </div>
         </header>
-        <section class="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 shadow-xl">
-            <div class="grid grid-cols-3 gap-4">
-                <div>
-                    <label for="rarity" class="mb-2 block text-sm font-medium text-zinc-400">Рарность</label>
-                    <div class="relative">
-                        <select id="rarity" class="custom-select h-12 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 pr-10 text-white outline-none transition hover:border-zinc-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20">
-                            <option value="">Любая рарность</option>
-                        </select>
-                        <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
+
+        <main class="mx-auto max-w-7xl px-6 py-8">
+            <header class="mb-8 flex items-center gap-2">
+                <img
+                    src="../assets/128x128.png"
+                    alt=""
+                    class="max-w-[64px]"
+                />
+
+                <div class="flex flex-col">
+                    <h1 class="text-4xl font-bold tracking-tight">
+                        CS2 Skin Generator
+                    </h1>
+
+                    <p class="text-zinc-400">
+                        Генератор тестовых данных для макетов рулеток
+                    </p>
+                </div>
+            </header>
+
+            <section class="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 shadow-xl">
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label for="rarity" class="mb-2 block text-sm font-medium text-zinc-400">
+                            Рарность
+                        </label>
+
+                        <div class="relative">
+                            <select
+                                id="rarity"
+                                class="custom-select h-12 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 pr-10 text-white outline-none transition hover:border-zinc-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                            >
+                                <option value="">Любая рарность</option>
+                            </select>
+
+                            <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <label for="weapon" class="mb-2 block text-sm font-medium text-zinc-400">Оружие</label>
-                    <div class="relative">
-                        <select id="weapon" class="custom-select h-12 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 pr-10 text-white outline-none transition hover:border-zinc-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20">
-                            <option value="">Любое оружие</option>
-                        </select>
-                        <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
+
+                    <div>
+                        <label for="weapon" class="mb-2 block text-sm font-medium text-zinc-400">
+                            Оружие
+                        </label>
+
+                        <div class="relative">
+                            <select
+                                id="weapon"
+                                class="custom-select h-12 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 pr-10 text-white outline-none transition hover:border-zinc-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                            >
+                                <option value="">Любое оружие</option>
+                            </select>
+
+                            <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <label for="count" class="mb-2 block text-sm font-medium text-zinc-400">Количество</label>
-                    <input id="count" type="number" value="10" min="1" class="custom-number h-12 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-white outline-none transition hover:border-zinc-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"/>
-                </div>
-                <div>
-                    <label for="imageWidth" class="mb-2 block text-sm font-medium text-zinc-400"> Ширина изображения </label>
-                    <input id="imageWidth" type="number" value="300" min="1" class="custom-number h-12 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-white outline-none transition hover:border-zinc-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"/>
-                </div>
-                <div>
-                    <label for="imageHeight" class="mb-2 block text-sm font-medium text-zinc-400">Высота изображения</label>
-                    <input id="imageHeight" type="number" value="225" min="1" class="custom-number h-12 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-white outline-none transition hover:border-zinc-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"/>
-                </div>
-                <div>
-                    <label class="mb-2 block text-sm font-medium text-transparent">Создать</label>
-                    <button id="generate" class="h-12 w-full rounded-xl bg-sky-600 font-semibold text-white transition hover:bg-sky-500 active:scale-[0.98]">Создать</button>
-                </div>
-            </div>
-        </section>
 
-        <section class="mt-8">
-            <div class="mb-4 flex items-center justify-between">
-                <h2 class="text-lg font-semibold">Превью карточек</h2>
-                <span class="text-xs text-zinc-500">изображение масштабируется по выбранным размерам</span>
-            </div>
+                    <div>
+                        <label for="count" class="mb-2 block text-sm font-medium text-zinc-400">
+                            Количество
+                        </label>
 
-            <div id="result" class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"></div>
-        </section>
+                        <input
+                            id="count"
+                            type="number"
+                            value="10"
+                            min="1"
+                            class="custom-number h-12 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-white outline-none transition hover:border-zinc-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                        />
+                    </div>
 
-		<section class="mt-6 rounded-2xl border border-zinc-800 bg-black/40 p-4">
-            <div class="mb-4 flex items-center justify-between">
-                <h2 class="font-semibold">JSON массив</h2>
-                <button id="copyJson" class="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-400 transition hover:border-sky-500 hover:text-sky-300 active:scale-[0.98]">Скопировать JSON</button>
-            </div>
-            <pre id="json" class="max-h-96 overflow-auto rounded-xl bg-black p-4 text-sm text-zinc-300"></pre>
-        </section>
-    </main>
-	<div id="toast" class="fixed right-6 top-6 z-50 hidden min-w-[280px] max-w-sm rounded-2xl border border-zinc-800 bg-zinc-950/95 p-4 shadow-2xl backdrop-blur">
-		<div class="flex items-start gap-3">
-			<div id="toastIcon" class="mt-0.5 h-2.5 w-2.5 rounded-full bg-red-500 shadow-lg shadow-red-500/50"></div>
-			<div>
-				<div id="toastTitle" class="text-sm font-semibold text-white">Ошибка</div>
-				<div id="toastMessage" class="mt-1 text-sm text-zinc-400">Что-то пошло не так</div>
-			</div>
-		</div>
-	</div>
-    <script src="./app.js"></script>
+                    <div>
+                        <label for="imageWidth" class="mb-2 block text-sm font-medium text-zinc-400">
+                            Ширина изображения
+                        </label>
+
+                        <input
+                            id="imageWidth"
+                            type="number"
+                            value="300"
+                            min="1"
+                            class="custom-number h-12 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-white outline-none transition hover:border-zinc-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                        />
+                    </div>
+
+                    <div>
+                        <label for="imageHeight" class="mb-2 block text-sm font-medium text-zinc-400">
+                            Высота изображения
+                        </label>
+
+                        <input
+                            id="imageHeight"
+                            type="number"
+                            value="225"
+                            min="1"
+                            class="custom-number h-12 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-white outline-none transition hover:border-zinc-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                        />
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-transparent">
+                            Создать
+                        </label>
+
+                        <button
+                            id="generate"
+                            class="h-12 w-full rounded-xl bg-sky-600 font-semibold text-white transition hover:bg-sky-500 active:scale-[0.98]"
+                        >
+                            Создать
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mt-8">
+                <div class="mb-4 flex items-center justify-between">
+                    <h2 class="text-lg font-semibold">
+                        Превью карточек
+                    </h2>
+
+                    <span class="text-xs text-zinc-500">
+                        изображение масштабируется по выбранным размерам
+                    </span>
+                </div>
+
+                <div
+                    id="result"
+                    class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                ></div>
+            </section>
+
+            <section id="json-viewer" class="mt-6 rounded-2xl border border-zinc-800 bg-black/40 p-4">
+                <div class="mb-4 flex items-center justify-between">
+                    <h2 class="font-semibold">
+                        JSON массив
+                    </h2>
+
+                    <button
+                        id="copyJson"
+                        class="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-400 transition hover:border-sky-500 hover:text-sky-300 active:scale-[0.98]"
+                    >
+                        Скопировать JSON
+                    </button>
+                </div>
+
+                <pre
+                    id="json"
+                    class="max-h-96 overflow-auto rounded-xl bg-black p-4 text-sm text-zinc-300"
+                ></pre>
+            </section>
+        </main>
+
+        <script src="./app.js"></script>
+    </div>
 </body>
 </html>

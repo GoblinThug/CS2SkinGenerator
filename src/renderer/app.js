@@ -395,10 +395,13 @@ function showToast(message, type = 'error', title = null) {
     });
 }
 
-async function copySkinImage(imageUrl) {
+async function copySkinImage(imageUrl, width, height) {
     try {
-        const img = new Image();
+        if (!width || !height || width <= 0 || height <= 0) {
+            throw new Error('Некорректный размер изображения');
+        }
 
+        const img = new Image();
         img.crossOrigin = 'anonymous';
 
         await new Promise((resolve, reject) => {
@@ -408,14 +411,16 @@ async function copySkinImage(imageUrl) {
         });
 
         const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
 
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
 
-        canvas.getContext('2d').drawImage(img, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
 
         const blob = await new Promise(resolve => {
-            canvas.toBlob(resolve);
+            canvas.toBlob(resolve, 'image/png');
         });
 
         if (!blob) {
@@ -424,11 +429,11 @@ async function copySkinImage(imageUrl) {
 
         await navigator.clipboard.write([
             new ClipboardItem({
-                [blob.type]: blob
+                'image/png': blob
             })
         ]);
 
-        showToast('Изображение скопировано в буфер обмена', 'success');
+        showToast(`Изображение скопировано ${width}×${height}`, 'success');
     } catch (error) {
         console.error(error);
         showToast(error.message || 'Не удалось скопировать изображение');
@@ -476,15 +481,17 @@ function createCardTemplate(item, width, height) {
     const rarityStyle = getRarityStyle(item.rarity);
 
     return `
-        <div class="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-b from-zinc-900 via-zinc-950 to-black p-4 shadow-2xl transition duration-300 hover:-translate-y-1 hover:border-zinc-600">
+        <div class="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-b from-zinc-900 via-zinc-950 to-black p-4 shadow-2xl transition duration-300 hover:-translate-y-1 hover:border-zinc-600 flex flex-col items-center">
 
-            <div class="absolute left-0 top-0 h-1 w-full ${rarityStyle.bg}"></div>
+            <div class="absolute top-0 h-1 w-full max-w-[100px] rounded-b-full ${rarityStyle.bg}"></div>
 
             <div class="absolute -top-20 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full ${rarityStyle.bg} opacity-25 blur-3xl transition duration-300 group-hover:opacity-45"></div>
 
             <div
-                class="relative mb-4 flex h-48 cursor-copy items-center justify-center rounded-2xl bg-black/40"
+                class="relative mb-4 flex h-48 cursor-copy items-center justify-center rounded-2xl bg-black/40 w-full"
                 data-copy-image="${escapeAttr(item.image)}"
+                data-copy-width="${width}"
+                data-copy-height="${height}"
                 title="Нажми, чтобы скопировать изображение"
             >
                 <img
@@ -495,7 +502,7 @@ function createCardTemplate(item, width, height) {
                 />
             </div>
 
-            <div class="mb-4 min-h-[58px] flex flex-col">
+            <div class="mb-4 min-h-[58px] flex flex-col w-full">
                 <div class="relative inline-block max-w-full">
                     <button
                         type="button"
@@ -519,7 +526,7 @@ function createCardTemplate(item, width, height) {
                 </div>
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-2 w-full">
                 <div class="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/80 px-3 py-2">
                     <span class="text-xs text-zinc-500">Оружие</span>
                     <span class="text-sm font-medium text-zinc-200">${escapeHtml(item.weapon)}</span>
@@ -573,7 +580,12 @@ function handleResultClick(event) {
     const textButton = event.target.closest('[data-copy-text]');
 
     if (imageButton) {
-        copySkinImage(imageButton.dataset.copyImage);
+        copySkinImage(
+            imageButton.dataset.copyImage,
+            Number(imageButton.dataset.copyWidth),
+            Number(imageButton.dataset.copyHeight)
+        );
+
         return;
     }
 

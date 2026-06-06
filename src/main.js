@@ -7,10 +7,12 @@ function createWindow() {
     win = new BrowserWindow({
         width: 1200,
         height: 800,
-        minWidth: 1000,
-        minHeight: 700,
+    
         frame: false,
-        backgroundColor: '#050509',
+        transparent: true,
+    
+        backgroundColor: '#00000000',
+    
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,

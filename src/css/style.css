@@ -1,19 +1,17 @@
-* {
-    scrollbar-width: thin;
-    scrollbar-color: #3f3f46 #09090b;
-}
-
 ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
+    display: none;
 }
 
 ::-webkit-scrollbar-track {
     background: #09090b;
     border-radius: 999px;
+    display: none;
 }
 
 ::-webkit-scrollbar-thumb {
+    display: none;
     background: linear-gradient(
         180deg,
         #3f3f46,
