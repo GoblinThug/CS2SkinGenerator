@@ -17,6 +17,16 @@
     "win": {
       "icon": "assets/icon.ico",
       "target": "nsis"
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "GoblinThug",
+        "repo": "cs2-skin-generator"
+      }
+    ]
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9"
   }
 }

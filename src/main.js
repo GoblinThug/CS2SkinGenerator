@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
+
 const path = require('path');
 
 let win = null;
@@ -21,6 +22,7 @@ function createWindow() {
     });
 
     win.loadFile('src/renderer/index.html');
+    autoUpdater.checkForUpdatesAndNotify();
 }
 
 ipcMain.handle('window:minimize', () => {
