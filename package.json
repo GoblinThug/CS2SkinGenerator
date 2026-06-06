@@ -1,0 +1,21 @@
+{
+  "name": "cs2-skin-generator",
+  "version": "1.0.0",
+  "author": "Goblin_Thug",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "electron .",
+    "build": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^42.3.3",
+    "electron-builder": "^26.15.0"
+  },
+  "build": {
+    "appId": "com.goblinthug.cs2skingenerator",
+    "productName": "CS2 Skin Generator",
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
