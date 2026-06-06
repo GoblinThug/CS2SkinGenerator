@@ -7,6 +7,7 @@ const state = {
 const DOM = {
     rarity: document.querySelector('#rarity'),
     weapon: document.querySelector('#weapon'),
+    search: document.querySelector('#search'),
     result: document.querySelector('#result'),
     json: document.querySelector('#json'),
     imageWidth: document.querySelector('#imageWidth'),
@@ -16,6 +17,7 @@ const DOM = {
 
 const STEAM_IMAGE_RATIO = 4 / 3;
 const MAX_TOASTS = 3;
+const SEARCH_LIMIT = 50;
 
 const WEARS = [
     'Factory New',
@@ -44,6 +46,31 @@ const KNIFE_TYPES = [
     'paracord',
     'survival'
 ];
+
+const GLOVE_TYPES = [
+    'glove',
+    'gloves',
+    'hand wraps',
+    'driver gloves',
+    'sport gloves',
+    'moto gloves',
+    'specialist gloves',
+    'hydra gloves',
+    'bloodhound gloves',
+    'broken fang gloves'
+];
+
+const RARITY_TRANSLATIONS = {
+    'Consumer Grade': 'Ширпотреб',
+    'Industrial Grade': 'Промышленное качество',
+    'Mil-Spec Grade': 'Армейское качество',
+    Restricted: 'Запрещённое',
+    Classified: 'Засекреченное',
+    Covert: 'Тайное',
+    Contraband: 'Контрабанда',
+    Extraordinary: 'Экстраординарное',
+    '★ Extraordinary': 'Экстраординарное'
+};
 
 const RARITY_COLORS = {
     'Consumer Grade': {
@@ -89,6 +116,24 @@ const DEFAULT_RARITY_STYLE = {
     bg: 'bg-zinc-400'
 };
 
+const EXTRAORDINARY_STYLE = {
+    text: 'text-amber-300',
+    glow: 'shadow-amber-400/50',
+    bg: 'bg-amber-400'
+};
+
+function debounce(fn, delay = 300) {
+    let timer = null;
+
+    return (...args) => {
+        clearTimeout(timer);
+
+        timer = setTimeout(() => {
+            fn(...args);
+        }, delay);
+    };
+}
+
 function randomBool(chance = 0.25) {
     return Math.random() < chance;
 }
@@ -99,10 +144,6 @@ function randomFromArray(items) {
 
 function randomWear() {
     return randomFromArray(WEARS);
-}
-
-function getRarityStyle(rarity) {
-    return RARITY_COLORS[rarity] || DEFAULT_RARITY_STYLE;
 }
 
 function getImage(skin) {
@@ -119,14 +160,45 @@ function isKnifeWeapon(weaponName = '') {
     return KNIFE_TYPES.some(type => name.includes(type));
 }
 
+function isGloveWeapon(weaponName = '') {
+    const name = weaponName.toLowerCase();
+
+    return GLOVE_TYPES.some(type => name.includes(type));
+}
+
 function getWeaponFilterName(skin) {
     const weaponName = getWeaponDisplayName(skin);
 
-    return isKnifeWeapon(weaponName) ? 'Ножи' : weaponName;
+    if (isKnifeWeapon(weaponName)) return 'Ножи';
+    if (isGloveWeapon(weaponName)) return 'Gloves';
+
+    return weaponName;
 }
 
 function getRarityName(skin) {
     return skin.rarity?.name || skin.rarity || '';
+}
+
+function getRarityDisplayNameByRaw(rarity) {
+    return RARITY_TRANSLATIONS[rarity] || rarity;
+}
+
+function getRarityDisplayName(skin) {
+    const weaponName = getWeaponDisplayName(skin);
+
+    if (isKnifeWeapon(weaponName) || isGloveWeapon(weaponName)) {
+        return 'Экстраординарное';
+    }
+
+    return getRarityDisplayNameByRaw(getRarityName(skin));
+}
+
+function getRarityStyle(item) {
+    if (item.isKnife || item.isGlove) {
+        return EXTRAORDINARY_STYLE;
+    }
+
+    return RARITY_COLORS[item.rarityRaw] || DEFAULT_RARITY_STYLE;
 }
 
 function getSkinName(skin) {
@@ -163,7 +235,7 @@ function numberValue(input, fallback) {
 function setupImageSizeRatio() {
     let syncing = false;
 
-    DOM.imageWidth.addEventListener('input', () => {
+    DOM.imageWidth?.addEventListener('input', () => {
         if (syncing) return;
 
         const width = numberValue(DOM.imageWidth, 0);
@@ -175,7 +247,7 @@ function setupImageSizeRatio() {
         syncing = false;
     });
 
-    DOM.imageHeight.addEventListener('input', () => {
+    DOM.imageHeight?.addEventListener('input', () => {
         if (syncing) return;
 
         const height = numberValue(DOM.imageHeight, 0);
@@ -188,27 +260,48 @@ function setupImageSizeRatio() {
     });
 }
 
-function createOption(value) {
+function createOption(value, label = value) {
     const option = document.createElement('option');
 
     option.value = value;
-    option.textContent = value;
+    option.textContent = label;
 
     return option;
 }
 
 function fillFilters() {
-    const rarities = [...new Set(state.skins.map(getRarityName).filter(Boolean))].sort();
-    const weapons = [...new Set(state.skins.map(getWeaponFilterName).filter(Boolean))].sort();
+    const rarityMap = new Map();
 
-    DOM.rarity.append(...rarities.map(createOption));
-    DOM.weapon.append(...weapons.map(createOption));
+    state.skins.forEach(skin => {
+        const rawRarity = getRarityName(skin);
+
+        if (!rawRarity) return;
+
+        rarityMap.set(rawRarity, getRarityDisplayNameByRaw(rawRarity));
+    });
+
+    const weapons = [...new Set(
+        state.skins
+            .map(getWeaponFilterName)
+            .filter(Boolean)
+    )].sort();
+
+    [...rarityMap.entries()]
+        .sort((a, b) => a[1].localeCompare(b[1], 'ru'))
+        .forEach(([value, label]) => {
+            DOM.rarity.appendChild(createOption(value, label));
+        });
+
+    weapons.forEach(weapon => {
+        DOM.weapon.appendChild(createOption(weapon));
+    });
 }
 
 function getFilters() {
     return {
         rarity: DOM.rarity.value,
         weapon: DOM.weapon.value,
+        search: DOM.search?.value.trim().toLowerCase() || '',
         width: numberValue(DOM.imageWidth, 300),
         height: numberValue(DOM.imageHeight, 225),
         count: numberValue(DOM.count, 10)
@@ -220,8 +313,21 @@ function getFilteredSkins(filters) {
         const skinRarity = getRarityName(skin);
         const skinWeapon = getWeaponFilterName(skin);
 
-        return (!filters.rarity || skinRarity === filters.rarity) &&
-            (!filters.weapon || skinWeapon === filters.weapon);
+        const weaponName = getWeaponDisplayName(skin).toLowerCase();
+        const skinName = getSkinName(skin).toLowerCase();
+        const originalName = String(skin.name || '').toLowerCase();
+
+        const searchText = `${weaponName} ${skinName} ${originalName}`;
+
+        const matchesSearch =
+            !filters.search ||
+            searchText.includes(filters.search);
+
+        return (
+            (!filters.rarity || skinRarity === filters.rarity) &&
+            (!filters.weapon || skinWeapon === filters.weapon) &&
+            matchesSearch
+        );
     });
 }
 
@@ -247,6 +353,8 @@ function createGeneratedItem(skin, width, height) {
     const skinName = getSkinName(skin);
     const wear = randomWear();
     const stattrak = randomBool();
+    const isKnife = isKnifeWeapon(weapon);
+    const isGlove = isGloveWeapon(weapon);
 
     return {
         weapon,
@@ -254,15 +362,30 @@ function createGeneratedItem(skin, width, height) {
         skin: skinName,
         fullName: `${stattrak ? 'StatTrak™ ' : ''}${weapon}`,
         subtitle: `${skinName} (${wear})`,
-        rarity: getRarityName(skin),
+        rarityRaw: getRarityName(skin),
+        rarity: getRarityDisplayName(skin),
         stattrak,
         wear,
+        isKnife,
+        isGlove,
         image: getImage(skin),
         imageSize: {
             width,
             height
         }
     };
+}
+
+function clearRenderedImages() {
+    DOM.result.querySelectorAll('img').forEach(img => {
+        img.removeAttribute('src');
+        img.removeAttribute('srcset');
+    });
+}
+
+function clearResults() {
+    clearRenderedImages();
+    DOM.result.replaceChildren();
 }
 
 function setupToastContainer() {
@@ -396,12 +519,16 @@ function showToast(message, type = 'error', title = null) {
 }
 
 async function copySkinImage(imageUrl, width, height) {
+    let canvas = null;
+    let ctx = null;
+
     try {
         if (!width || !height || width <= 0 || height <= 0) {
             throw new Error('Некорректный размер изображения');
         }
 
         const img = new Image();
+
         img.crossOrigin = 'anonymous';
 
         await new Promise((resolve, reject) => {
@@ -410,11 +537,11 @@ async function copySkinImage(imageUrl, width, height) {
             img.src = imageUrl;
         });
 
-        const canvas = document.createElement('canvas');
+        canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
 
-        const ctx = canvas.getContext('2d');
+        ctx = canvas.getContext('2d');
 
         ctx.clearRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0, width, height);
@@ -437,6 +564,15 @@ async function copySkinImage(imageUrl, width, height) {
     } catch (error) {
         console.error(error);
         showToast(error.message || 'Не удалось скопировать изображение');
+    } finally {
+        if (ctx && canvas) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        if (canvas) {
+            canvas.width = 0;
+            canvas.height = 0;
+        }
     }
 }
 
@@ -474,11 +610,15 @@ function renderJson(items) {
 }
 
 function renderCards(items, width, height) {
-    DOM.result.innerHTML = items.map(item => createCardTemplate(item, width, height)).join('');
+    clearResults();
+
+    DOM.result.innerHTML = items
+        .map(item => createCardTemplate(item, width, height))
+        .join('');
 }
 
 function createCardTemplate(item, width, height) {
-    const rarityStyle = getRarityStyle(item.rarity);
+    const rarityStyle = getRarityStyle(item);
 
     return `
         <div class="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-b from-zinc-900 via-zinc-950 to-black p-4 shadow-2xl transition duration-300 hover:-translate-y-1 hover:border-zinc-600 flex flex-col items-center">
@@ -488,7 +628,7 @@ function createCardTemplate(item, width, height) {
             <div class="absolute -top-20 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full ${rarityStyle.bg} opacity-25 blur-3xl transition duration-300 group-hover:opacity-45"></div>
 
             <div
-                class="relative mb-4 flex h-48 cursor-copy items-center justify-center rounded-2xl bg-black/40 w-full"
+                class="relative mb-4 flex h-48 cursor-copy items-center justify-center rounded-2xl bg-black/40 w-full overflow-hidden"
                 data-copy-image="${escapeAttr(item.image)}"
                 data-copy-width="${width}"
                 data-copy-height="${height}"
@@ -497,6 +637,8 @@ function createCardTemplate(item, width, height) {
                 <img
                     src="${escapeAttr(item.image)}"
                     alt="${escapeAttr(`${item.fullName} ${item.subtitle}`)}"
+                    loading="lazy"
+                    decoding="async"
                     style="width:${width}px;height:${height}px"
                     class="relative z-10 max-w-[70%] object-contain drop-shadow-2xl transition duration-300 group-hover:scale-110"
                 />
@@ -563,13 +705,34 @@ function generate() {
     if (!filtered.length) {
         state.generated = [];
         renderJson([]);
-        DOM.result.innerHTML = '';
+        clearResults();
         showToast('По выбранным фильтрам ничего не найдено', 'info');
         return;
     }
 
-    state.generated = pickRandomItems(filtered, filters.count)
-        .map(skin => createGeneratedItem(skin, filters.width, filters.height));
+    let selectedSkins;
+
+    if (filters.search) {
+        selectedSkins = filtered
+            .slice()
+            .sort((a, b) => {
+                const aName = `${getWeaponDisplayName(a)} ${getSkinName(a)}`;
+                const bName = `${getWeaponDisplayName(b)} ${getSkinName(b)}`;
+
+                return aName.localeCompare(bName, 'en');
+            })
+            .slice(0, SEARCH_LIMIT);
+
+        if (filtered.length > SEARCH_LIMIT) {
+            showToast(`Найдено ${filtered.length}, показано первые ${SEARCH_LIMIT}`, 'info');
+        }
+    } else {
+        selectedSkins = pickRandomItems(filtered, filters.count);
+    }
+
+    state.generated = selectedSkins.map(skin =>
+        createGeneratedItem(skin, filters.width, filters.height)
+    );
 
     renderJson(state.generated);
     renderCards(state.generated, filters.width, filters.height);
@@ -616,11 +779,26 @@ function setupWindowControls() {
     });
 }
 
+function setupSearch() {
+    if (!DOM.search) return;
+
+    DOM.search.addEventListener('input', debounce(() => {
+        generate();
+    }, 300));
+
+    DOM.search.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+            generate();
+        }
+    });
+}
+
 async function init() {
     try {
         setupToastContainer();
         setupWindowControls();
         setupImageSizeRatio();
+        setupSearch();
 
         DOM.result.addEventListener('click', handleResultClick);
 

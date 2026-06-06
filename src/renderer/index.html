@@ -16,7 +16,7 @@
         class="h-screen overflow-y-auto overflow-x-hidden app-no-drag"
     >
         <header
-            class="sticky left-0 top-0 z-[9999] flex h-12 w-full items-center justify-between border-b border-zinc-800 bg-zinc-950/95 backdrop-blur app-drag app-drag"
+            class="sticky left-0 top-0 z-[9999] flex h-12 w-full items-center justify-between border-b border-zinc-800 bg-zinc-950/95 backdrop-blur app-drag"
         >
             <div class="flex h-full items-center gap-3 px-4">
                 <div class="h-3 w-3 rounded-full bg-sky-500 shadow-lg shadow-sky-500/50"></div>
@@ -26,7 +26,7 @@
                 </div>
             </div>
 
-            <div class="flex h-full items-center app-no-drag">
+            <div class="flex h-full items-center">
                 <button
                     id="reloadApp"
                     class="h-full px-4 text-xs text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
@@ -98,6 +98,18 @@
 
             <section class="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 shadow-xl">
                 <div class="grid grid-cols-3 gap-4">
+                    <div class="col-span-3">
+                        <label for="search" class="mb-2 block text-sm font-medium text-zinc-400">
+                            Поиск
+                        </label>
+                    
+                        <input
+                            id="search"
+                            type="text"
+                            placeholder="Например: AK-47, Asiimov, Karambit..."
+                            class="h-12 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-4 text-white outline-none transition hover:border-zinc-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                        />
+                    </div>
                     <div>
                         <label for="rarity" class="mb-2 block text-sm font-medium text-zinc-400">
                             Рарность
@@ -139,7 +151,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div>
                         <label for="count" class="mb-2 block text-sm font-medium text-zinc-400">
                             Количество
