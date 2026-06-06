@@ -8,11 +8,20 @@ function createWindow() {
     win = new BrowserWindow({
         width: 1200,
         height: 800,
+        minWidth: 1000,
+        minHeight: 700,
+    
+        icon: path.join(__dirname, '../assets/icon.ico'),
     
         frame: false,
-        transparent: true,
+        transparent: false,
+        backgroundColor: '#050509',
     
-        backgroundColor: '#00000000',
+        resizable: true,
+        movable: true,
+        minimizable: true,
+        maximizable: true,
+        thickFrame: true,
     
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),

@@ -69,3 +69,16 @@ textarea {
     appearance: none;
     margin: 0;
 }
+
+.app-drag {
+    -webkit-app-region: drag;
+    user-select: none;
+}
+
+.app-no-drag,
+button,
+select,
+input,
+textarea {
+    -webkit-app-region: no-drag;
+}
