@@ -1,6 +1,6 @@
 {
   "name": "cs2-skin-generator",
-  "version": "1.0.4",
+  "version": "v1.0.4",
   "author": "Goblin_Thug",
   "main": "src/main.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "appId": "com.goblinthug.cs2skingenerator",
     "productName": "CS2 Skin Generator",
     "win": {
-      "icon": "assets/icon.ico",
+      "icon": "src/assets/icon.ico",
       "target": "nsis"
     },
     "publish": [
