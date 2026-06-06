@@ -1,6 +1,6 @@
 {
   "name": "cs2-skin-generator",
-  "version": "v1.0.4",
+  "version": "v1.1.0",
   "author": "Goblin_Thug",
   "main": "src/main.js",
   "scripts": {
