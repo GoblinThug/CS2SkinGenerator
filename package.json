@@ -1,6 +1,6 @@
 {
   "name": "cs2-skin-generator",
-  "version": "v1.1.0",
+  "version": "v1.1.1",
   "author": "Goblin_Thug",
   "main": "src/main.js",
   "scripts": {
@@ -17,6 +17,10 @@
     "win": {
       "icon": "src/assets/icon.ico",
       "target": "nsis"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "maintainer": "goblinthug <goblin.thug@mail.ru>"
     },
     "publish": [
       {
